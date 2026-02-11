@@ -15,4 +15,4 @@ Questa libreria utilizza Pydantic per garantire che i dati inseriti rispettino i
 
 ### Installazione da GitHub
 ```bash
-pip install git+[https://github.com/Nicolas-Personal-Zucchero/dachser-edi-lib.git](https://github.com/Nicolas-Personal-Zucchero/dachser-edi-lib.git)
+pip install git+https://github.com/Nicolas-Personal-Zucchero/dachser-edi-lib.git
