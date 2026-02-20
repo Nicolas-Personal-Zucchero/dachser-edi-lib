@@ -79,7 +79,7 @@ class TransportOrder(BaseModel, EdiObject):
     lines: List[ShipmentLine] = Field(..., min_length=1)
 
     # --- Footer ---
-    sscc: str = Field(..., alias="SSCC")
+    sscc: str = Field(..., min_length=20, max_length=20, alias="SSCC")
 
     # --- Helper per formattazione date XML ---
     def _format_utc_date(self, date_obj: Optional[datetime]) -> Optional[str]:
