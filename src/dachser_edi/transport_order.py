@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 from .partners import Consignor, Consignee, Forwarder
 from .base import EdiObject
 from .shipment_line import ShipmentLine
-from .enums import Division, Action, Currency
+from .enums import Division, Action, Currency, Product
 
 # --- Sotto-modelli per pulire i dizionari ---
 
@@ -48,7 +48,7 @@ class TransportOrder(BaseModel, EdiObject):
     original_term: Optional[str] = None
     original_term_location: Optional[str] = None
     division: Optional[Division] = None
-    dachser_product: Optional[str] = None
+    dachser_product: Optional[Product] = None
     order_group: Optional[str] = None
 
     # --- Dates (Manteniamo datetime objects qui) ---
@@ -151,7 +151,7 @@ class TransportOrder(BaseModel, EdiObject):
         if self.division:
             self._add_text_element(parent, "Division", self.division.value)
         if self.dachser_product:
-            self._add_text_element(parent, "DachserProduct", self.dachser_product)
+            self._add_text_element(parent, "DachserProduct", self.dachser_product.value)
         if self.order_group:
             self._add_text_element(parent, "OrderGroup", self.order_group)
 

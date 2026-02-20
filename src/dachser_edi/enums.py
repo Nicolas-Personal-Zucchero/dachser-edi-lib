@@ -5,6 +5,32 @@ class Division(str, Enum):
     FOOD = "F"
     AIR_SEA = "A"
 
+class Product(str, Enum):
+    # Delivery on next working day dependent on Km-zones
+    TARGOSPEED = "Z"
+    # Delivery on next working day by 10:00, dependent on Km-zones
+    TARGOSPEED_10 = "S"
+    # Delivery on next working day by 12:00, dependent on Km-zones
+    TARGOSPEED_12 = "E"
+    # Delivery on next working day (only after consultation with responsible DACHSER-branch)
+    TARGOSPEED_PLUS = "X"
+    # Delivery on a given date. The required delivery appointment has to be specified in the corresponding fields (according to the data format). With non-federal holidays a separate clearance with the responsible DACHSER-branch is needed.
+    TARGOFIX = "V"
+    # Delivery on a given date by 10:00. The required delivery appointment has to be specified in the corresponding fields (according to the data format). With non-federal holidays a separate clearance with the responsible DACHSER-branch is needed.
+    TARGOFIX_10 = "R"
+    # Delivery on a given date by 12:00. The required delivery appointment has to be specified in the corresponding fields (according to the data format). With non-federal holidays a separate clearance with the responsible DACHSER-branch is needed.
+    TARGOFIX_12 = "W"
+    # Delivery within the scope of standard transit time (generally within 2 working days)
+    TARGOFLEX = "Y"
+    # Delivery “free kerb side” beside the truck at the consignee exclusively for free house terms. A delivery appointment has to be agreed with the consignee. The required contact information have to be specified within the corresponding fields (according to the data format).
+    TARGO_ON_SITE = "A"
+    # Delivery in 1-man-handling “free delivered to maximum one customer specified unloading point” at the consignee. A delivery appointment has to be agreed with the consignee. The required contact information have to be specified within the corresponding fields (according to the data format).
+    TARGO_ON_SITE_PLUS = "B"
+    # Delivery within the scope of transit time beyond the limits of the entargo countries.
+    CLASSICLINE = "N"
+    # Delivery “free kerb side” beside the truck at the consignee exclusively for the incoterm "free delivered" on a given date. The consignor agrees a delivery appointment (the day) with the consignee. The required delivery appointment has to be specified in the corresponding fields (according to the data format). The delivery branch asks the consignee the time slot for the delivery (in the morning or in the afternoon).
+    TARGO_ON_SITE_FIX = "U"
+
 class Action(str, Enum):
     ORIGINAL = "9"
     UPDATE = "5"
