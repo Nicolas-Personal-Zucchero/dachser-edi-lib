@@ -91,19 +91,19 @@ class MeasurementName(str, Enum):
     HEIGHT = "Height"
 
 class UnitCode(str, Enum):
-    CLT = "CLT"
-    CMQ = "CMQ"
-    CMT = "CMT"
-    DMQ = "DMQ"
-    DMT = "DMT"
-    GRM = "GRM"
-    HLT = "HLT"
-    KGM = "KGM"
-    LTR = "LTR"
-    MLT = "MLT"
-    MMT = "MMT"
-    MTQ = "MTQ"
-    MTR = "MTR"
+    CENTILITER = "CLT"        # Centilitri (Volume liquidi)
+    CUBIC_CENTIMETER = "CMQ"  # Centimetri cubi (Volume / Cubaggio)
+    CENTIMETER = "CMT"        # Centimetri (Lunghezza)
+    CUBIC_DECIMETER = "DMQ"   # Decimetri cubi (Volume / Cubaggio)
+    DECIMETER = "DMT"         # Decimetri (Lunghezza)
+    GRAM = "GRM"              # Grammi (Peso / Massa)
+    HECTOLITER = "HLT"        # Ettolitri (Volume liquidi)
+    KILOGRAM = "KGM"          # Chilogrammi (Peso / Massa)
+    LITER = "LTR"             # Litri (Volume liquidi)
+    MILLILITER = "MLT"        # Millilitri (Volume liquidi)
+    MILLIMETER = "MMT"        # Millimetri (Lunghezza)
+    CUBIC_METER = "MTQ"       # Metri cubi (Volume / Cubaggio)
+    METER = "MTR"             # Metri lineari (Lunghezza)
 
 class MeasurementType(str, Enum):
     GROSS_WEIGHT = "GRO"
