@@ -11,6 +11,6 @@ class EdiObject:
         raise NotImplementedError("You must implement to_element in subclasses")
 
     def _add_text_element(self, parent, tag, value):
-        if value is not None:
+        if value is not None and value != "":
             el = ET.SubElement(parent, tag)
             el.text = str(value)
