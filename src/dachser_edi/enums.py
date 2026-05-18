@@ -72,7 +72,10 @@ class DachserContactType(str, Enum):
 class PackingType(str, Enum):
     EURO_PALLET = "EU" #Pallet a scambio
     LOSS_PALLET = "EW" #Pallet a perdita
-    BOX = "KT" #Cartoni
+    CARTON = "KT"
+    SACK = "S"
+    BARREL = "F"
+    BIG_BAG = "BB"
 
 class CountryCode(str, Enum):
     IT = "IT"
