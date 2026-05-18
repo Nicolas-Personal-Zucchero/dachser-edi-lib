@@ -15,3 +15,4 @@ from .shipment_line import ShipmentLine
 from .transport_order import TransportOrder, PreliminaryShipmentDetails, GoodsValue, CodDetails
 
 from .sscc import SSCCGenerator
+from .fercam_sftp import FercamSFTP
