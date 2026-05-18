@@ -2,7 +2,7 @@ from .base import EdiObject
 from .enums import (
     Division, Action, Currency, DachserContactType, 
     PackingType, CountryCode, MeasurementName, 
-    UnitCode, MeasurementType, Product
+    UnitCode, MeasurementType, Product, TextType
 )
 from .address import Address
 from .contact import Contact

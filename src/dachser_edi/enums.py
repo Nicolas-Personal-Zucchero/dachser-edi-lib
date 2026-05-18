@@ -112,3 +112,9 @@ class MeasurementType(str, Enum):
     GROSS_WEIGHT = "GRO"
     NET_WEIGHT = "NET"
     CHARGEABLE_WEIGHT = "CHA"
+
+class TextType(str, Enum):
+    DELIVERY_INSTRUCTION = "ZU",
+    NOTIFICATION_ON_DELIVERY = "AS"
+    SCHEDULED_APPOINTMENT = "AP"
+    OTHER_INFORMATION = "SI"

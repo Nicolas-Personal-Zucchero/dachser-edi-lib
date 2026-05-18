@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 from .partners import Consignor, Consignee, Forwarder
 from .base import EdiObject
 from .shipment_line import ShipmentLine
-from .enums import Division, Action, Currency, Product
+from .enums import Division, Action, Currency, Product, TextType
 
 # --- Sotto-modelli per pulire i dizionari ---
 
@@ -78,6 +78,8 @@ class TransportOrder(BaseModel, EdiObject):
     # Validazione: la lista non può essere vuota
     lines: List[ShipmentLine] = Field(..., min_length=1)
 
+    # --- Notes ---
+    notes: Optional[str] = None
     # --- Footer ---
     sscc: str = Field(..., min_length=20, max_length=20, alias="SSCC")
 
@@ -103,6 +105,7 @@ class TransportOrder(BaseModel, EdiObject):
         self._build_logistics_details(shipment_header)
         
         self._build_shipment_lines(shipment_header)
+        self._build_shipment_text(shipment_header)
         self._build_package_identification(shipment_header)
 
         ET.indent(root, space="    ", level=0)
@@ -201,6 +204,12 @@ class TransportOrder(BaseModel, EdiObject):
     def _build_shipment_lines(self, parent):
         for line in self.lines:
             parent.append(line.to_element())
+
+    def _build_shipment_text(self, parent):
+        if self.notes:
+            text_element = ET.SubElement(parent, "ShipmentText", {"TextType": TextType.DELIVERY_INSTRUCTION.value})
+            self._add_text_element(text_element, "Text", self.notes)
+            self._add_text_element(text_element, "TextLanguage", "IT")
 
     def _build_package_identification(self, parent):
         if self.sscc:
