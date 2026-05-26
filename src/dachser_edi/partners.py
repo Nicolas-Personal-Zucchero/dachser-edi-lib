@@ -10,7 +10,7 @@ from .enums import DachserContactType
 class BasePartner(BaseModel, EdiObject):
     id: Optional[str] = Field(default=None, max_length=17)
     gln: Optional[str] = Field(default=None, min_length=13, max_length=13)
-    name: Optional[str] = Field(default=None, max_length=30)
+    name: Optional[str] = Field(default=None, max_length=90)
     _address_type: Optional[str] = None
 
     def to_element(self):
@@ -19,7 +19,11 @@ class BasePartner(BaseModel, EdiObject):
         partner_info = ET.Element("PartnerInformation")
         self._add_text_element(partner_info, "PartnerID", self.id)
         self._add_text_element(partner_info, "PartnerGLN", self.gln)
-        self._add_text_element(partner_info, "PartnerName", self.name)
+        if self.name:
+            for i in range(0, len(self.name), 30):
+                name_chunk = self.name[i:i+30]
+                if name_chunk:
+                    self._add_text_element(partner_info, "PartnerName", name_chunk)
         shipment_address.append(partner_info)
         return shipment_address
 

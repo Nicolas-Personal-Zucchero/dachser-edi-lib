@@ -83,7 +83,6 @@ class FercamSFTP:
         filename = remote_filename or os.path.basename(local_file_path)
         remote_file_path = posixpath.join(self.DIR_TO_FERCAM, filename)
 
-
         try:
             self.logger.info(f"Uploading {local_file_path} to {remote_file_path}...")
 
@@ -120,7 +119,6 @@ class FercamSFTP:
 
     def get_file(self, remote_filename: str, local_folder: str, delete_after: bool = False) -> None:
         self._ensure_connection()
-
 
         remote_path = posixpath.join(self.DIR_FROM_FERCAM, remote_filename)
         local_path = os.path.join(local_folder, remote_filename)
