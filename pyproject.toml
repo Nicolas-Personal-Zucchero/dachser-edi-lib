@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dachser_edi"
-version = "1.4.2"
+version = "1.4.3"
 description = "Libreria per generare XML EDI formato Dachser/TransportOrder"
 authors = [
   { name="Nicolas Amadori", email="nicolas.amadori02@gmail.com" },

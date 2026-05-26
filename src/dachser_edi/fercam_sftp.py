@@ -3,6 +3,7 @@ import io
 import paramiko
 import logging
 from typing import Optional, Union
+import posixpath
 
 class FercamSFTP:
     _PRODUCTION_SERVER = "sftp-prod-in.fercam.com"
@@ -12,13 +13,13 @@ class FercamSFTP:
     DIR_FROM_FERCAM = "From_Fercam"
 
     def __init__(self, 
-                 username: str, 
-                 password: str, 
-                 use_test_server: bool = False, 
-                 auto_add_keys: bool = False,
-                 timeout: int = 30,
-                 logger: Optional[logging.Logger] = None
-                 ) -> None:
+                username: str, 
+                password: str, 
+                use_test_server: bool = False, 
+                auto_add_keys: bool = False,
+                timeout: int = 30,
+                logger: Optional[logging.Logger] = None
+                ) -> None:
         self.username = username
         self.password = password
         self.hostname = self._TEST_SERVER if use_test_server else self._PRODUCTION_SERVER
@@ -38,10 +39,10 @@ class FercamSFTP:
         self.connect()
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         self.close()
 
-    def connect(self):
+    def connect(self) -> None:
         if self.sftp is None:
             try:
                 self.logger.info(f"Connecting to {self.hostname}...")
@@ -65,15 +66,23 @@ class FercamSFTP:
         self.ssh_client.close()
         self.logger.info("Connection closed.")
 
+    def _ensure_connection(self) -> None:
+        """Verifica che il socket e il canale SFTP siano effettivamente attivi."""
+        transport = self.ssh_client.get_transport()
+        if self.sftp is None or transport is None or not transport.is_active():
+            self.logger.info("Socket inattivo o disconnesso, tentativo di riconnessione...")
+            self.connect()
+
     def send_file(self, local_file_path: str, remote_filename: str = None) -> None:
-        if not self.sftp: self.connect()
+        self._ensure_connection()
         
         if not os.path.isfile(local_file_path):
             self.logger.error(f"Local file '{local_file_path}' not found.")
-            return
+            raise FileNotFoundError(f"File not found: {local_file_path}")
         
         filename = remote_filename or os.path.basename(local_file_path)
-        remote_file_path = f"{self.DIR_TO_FERCAM}/{filename}"
+        remote_file_path = posixpath.join(self.DIR_TO_FERCAM, filename)
+
 
         try:
             self.logger.info(f"Uploading {local_file_path} to {remote_file_path}...")
@@ -87,10 +96,10 @@ class FercamSFTP:
             raise
 
     def send_content(self, content: Union[str, bytes], remote_filename: str) -> None:
-        if not self.sftp: self.connect()
+        self._ensure_connection()
 
-        remote_file_path = f"{self.DIR_TO_FERCAM}/{remote_filename}"
-        
+        remote_file_path = posixpath.join(self.DIR_TO_FERCAM, remote_filename)
+
         # Paramiko richiede stream di byte. Codifichiamo la stringa se necessario.
         if isinstance(content, str):
             content = content.encode('utf-8')
@@ -110,16 +119,15 @@ class FercamSFTP:
             raise
 
     def get_file(self, remote_filename: str, local_folder: str, delete_after: bool = False) -> None:
-        if not self.sftp: self.connect()
+        self._ensure_connection()
 
-        remote_path = f"{self.DIR_FROM_FERCAM}/{remote_filename}"
+
+        remote_path = posixpath.join(self.DIR_FROM_FERCAM, remote_filename)
         local_path = os.path.join(local_folder, remote_filename)
 
         try:
             self.logger.info(f"Downloading {remote_path} to {local_path}...")
-
-            self.sftp.get(remote_path, local_path, callback=self._print_progress)
-
+            self.sftp.get(remote_path, local_path)
             self.logger.info("\nDownload successful.")
 
             if delete_after:
