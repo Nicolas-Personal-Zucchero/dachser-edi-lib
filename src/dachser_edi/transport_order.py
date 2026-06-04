@@ -79,7 +79,7 @@ class TransportOrder(BaseModel, EdiObject):
     lines: List[ShipmentLine] = Field(..., min_length=1)
 
     # --- Notes ---
-    notes: Optional[str] = None
+    notes: Optional[List[str]] = None
     # --- Footer ---
     sscc: str = Field(..., min_length=20, max_length=20, alias="SSCC")
 
@@ -208,7 +208,8 @@ class TransportOrder(BaseModel, EdiObject):
     def _build_shipment_text(self, parent):
         if self.notes:
             text_element = ET.SubElement(parent, "ShipmentText", {"TextType": TextType.DELIVERY_INSTRUCTION.value})
-            self._add_text_element(text_element, "Text", self.notes)
+            for n in self.notes:
+                self._add_text_element(text_element, "Text", n)
             self._add_text_element(text_element, "TextLanguage", "IT")
 
     def _build_package_identification(self, parent):
