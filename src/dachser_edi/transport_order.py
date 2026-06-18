@@ -1,5 +1,5 @@
 import xml.etree.ElementTree as ET
-from typing import List, Optional
+from typing import Annotated, List, Optional
 from datetime import datetime, timezone
 from pydantic import BaseModel, Field
 
@@ -80,8 +80,10 @@ class TransportOrder(BaseModel, EdiObject):
 
     # --- Notes ---
     notes: Optional[List[str]] = None
+
     # --- Footer ---
-    sscc: str = Field(..., min_length=20, max_length=20, alias="SSCC")
+    # Validazione: lista con almeno 1 elemento, in cui ogni stringa ha esattamente 20 caratteri
+    ssccs: List[Annotated[str, Field(min_length=20, max_length=20)]] = Field(..., alias="SSCC", min_length=1)
 
     # --- Helper per formattazione date XML ---
     def _format_utc_date(self, date_obj: Optional[datetime]) -> Optional[str]:
@@ -213,6 +215,7 @@ class TransportOrder(BaseModel, EdiObject):
             self._add_text_element(text_element, "TextLanguage", "IT")
 
     def _build_package_identification(self, parent):
-        if self.sscc:
-            pkg_id = ET.SubElement(parent, "PackageIdentification")
-            self._add_text_element(pkg_id, "SSCCBarCode", self.sscc)
+        if self.ssccs:
+            for sscc in self.ssccs:
+                pkg_id = ET.SubElement(parent, "PackageIdentification")
+                self._add_text_element(pkg_id, "SSCCBarCode", sscc)
