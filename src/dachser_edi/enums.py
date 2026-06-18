@@ -77,13 +77,67 @@ class PackingType(str, Enum):
     BARREL = "F"
     BIG_BAG = "BB"
 
+from enum import Enum
+
 class CountryCode(str, Enum):
-    IT = "IT"
-    DE = "DE"
-    FR = "FR"
-    ES = "ES"
-    AT = "AT"
-    CH = "CH"
+    # Europa Occidentale e Centrale
+    AT = "AT"  # Austria
+    BE = "BE"  # Belgio
+    CH = "CH"  # Svizzera
+    DE = "DE"  # Germania
+    FR = "FR"  # Francia
+    LI = "LI"  # Liechtenstein
+    LU = "LU"  # Lussemburgo
+    MC = "MC"  # Monaco
+    NL = "NL"  # Paesi Bassi
+
+    # Europa del Sud
+    AD = "AD"  # Andorra
+    ES = "ES"  # Spagna
+    GR = "GR"  # Grecia
+    IT = "IT"  # Italia
+    MT = "MT"  # Malta
+    PT = "PT"  # Portogallo
+    SM = "SM"  # San Marino
+    VA = "VA"  # Città del Vaticano
+
+    # Europa del Nord
+    DK = "DK"  # Danimarca
+    EE = "EE"  # Estonia
+    FI = "FI"  # Finlandia
+    GB = "GB"  # Regno Unito
+    IE = "IE"  # Irlanda
+    IS = "IS"  # Islanda
+    LT = "LT"  # Lituania
+    LV = "LV"  # Lettonia
+    NO = "NO"  # Norvegia
+    SE = "SE"  # Svezia
+
+    # Europa dell'Est e Balcani
+    AL = "AL"  # Albania
+    BA = "BA"  # Bosnia ed Erzegovina
+    BG = "BG"  # Bulgaria
+    BY = "BY"  # Bielorussia
+    CZ = "CZ"  # Cechia
+    HR = "HR"  # Croazia
+    HU = "HU"  # Ungheria
+    MD = "MD"  # Moldavia
+    ME = "ME"  # Montenegro
+    MK = "MK"  # Macedonia del Nord
+    PL = "PL"  # Polonia
+    RO = "RO"  # Romania
+    RS = "RS"  # Serbia
+    RU = "RU"  # Russia
+    SI = "SI"  # Slovenia
+    SK = "SK"  # Slovacchia
+    UA = "UA"  # Ucraina
+
+    # Nazioni Transcontinentali / Area Caucasica
+    AM = "AM"  # Armenia
+    AZ = "AZ"  # Azerbaigian
+    CY = "CY"  # Cipro
+    GE = "GE"  # Georgia
+    TR = "TR"  # Turchia
 
 class MeasurementName(str, Enum):
     WEIGHT = "Weight"
