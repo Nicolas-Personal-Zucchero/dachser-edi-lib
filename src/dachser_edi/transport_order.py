@@ -83,7 +83,7 @@ class TransportOrder(BaseModel, EdiObject):
 
     # --- Footer ---
     # Validazione: lista con almeno 1 elemento, in cui ogni stringa ha esattamente 20 caratteri
-    ssccs: List[Annotated[str, Field(min_length=20, max_length=20)]] = Field(..., alias="SSCC", min_length=1)
+    ssccs: List[Annotated[str, Field(min_length=20, max_length=20)]] = Field(..., alias="SSCCS", min_length=1)
 
     # --- Helper per formattazione date XML ---
     def _format_utc_date(self, date_obj: Optional[datetime]) -> Optional[str]:
