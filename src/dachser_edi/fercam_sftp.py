@@ -43,35 +43,75 @@ class FercamSFTP:
         self.close()
 
     def connect(self) -> None:
-        if self.sftp is None:
-            try:
-                self.logger.info(f"Connecting to {self.hostname}...")
-                self.ssh_client.connect(
-                    self.hostname, 
-                    username=self.username, 
-                    password=self.password,
-                    timeout=self.timeout,
-                    banner_timeout=30
-                )
-                self.sftp = self.ssh_client.open_sftp()
-                self.logger.info("Connection established.")
-            except Exception as e:
-                self.logger.error(f"Failed to connect: {e}")
-                raise
+        if self.sftp is not None:
+            return
 
-    def close(self):
-        if self.sftp:
-            self.sftp.close()
-            self.sftp = None
-        self.ssh_client.close()
-        self.logger.info("Connection closed.")
+        # A previous connection may have left a dead Transport behind.
+        # Always start from a clean SSHClient state.
+        self.close()
+
+        try:
+            self.logger.info(f"Connecting to {self.hostname}...")
+            self.ssh_client.connect(
+                self.hostname,
+                username=self.username,
+                password=self.password,
+                timeout=self.timeout,
+                banner_timeout=30,
+            )
+            self.sftp = self.ssh_client.open_sftp()
+            self.logger.info("Connection established.")
+        except Exception as e:
+            self.logger.error(f"Failed to connect: {e}")
+            self.close()
+            raise
+
+    def close(self) -> None:
+        had_connection = (
+            self.sftp is not None or self.ssh_client.get_transport() is not None
+        )
+
+        if self.sftp is not None:
+            try:
+                self.sftp.close()
+            except Exception as e:
+                # The socket may already be dead; that's exactly what we want.
+                self.logger.debug(f"Error closing SFTP session: {e}")
+            finally:
+                self.sftp = None
+
+        try:
+            self.ssh_client.close()
+        except Exception as e:
+            self.logger.debug(f"Error closing SSH client: {e}")
+
+        if had_connection:
+            self.logger.info("Connection closed.")
+
+    def _is_connected(self) -> bool:
+        transport = self.ssh_client.get_transport()
+        if transport is None or not transport.is_active() or self.sftp is None:
+            return False
+
+        channel = self.sftp.get_channel()
+        return bool(
+            channel
+            and channel.active
+            and not channel.closed
+            and not channel.eof_received
+            and not channel.eof_sent
+        )
 
     def _ensure_connection(self) -> None:
-        """Verifica che il socket e il canale SFTP siano effettivamente attivi."""
-        transport = self.ssh_client.get_transport()
-        if self.sftp is None or transport is None or not transport.is_active():
-            self.logger.info("Socket inattivo o disconnesso, tentativo di riconnessione...")
-            self.connect()
+        if self._is_connected():
+            return
+
+        self.logger.info(
+            "Socket inattivo o disconnesso, tentativo di riconnessione..."
+        )
+
+        self.close()
+        self.connect()
 
     def send_file(self, local_file_path: str, remote_filename: str = None) -> None:
         self._ensure_connection()
