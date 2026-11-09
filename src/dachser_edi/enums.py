@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class Division(str, Enum):
     EUROPEAN = "T"
     FOOD = "F"
@@ -26,6 +27,8 @@ class Product(str, Enum):
     TARGO_ON_SITE = "A"
     # Delivery in 1-man-handling “free delivered to maximum one customer specified unloading point” at the consignee. A delivery appointment has to be agreed with the consignee. The required contact information have to be specified within the corresponding fields (according to the data format).
     TARGO_ON_SITE_PLUS = "B"
+    # Delivery in 2-men-handling “free delivered to maximum one customer specified unloading point” at the consignee. A delivery appointment has to be agreed with the consignee. Transit time targospeed to Dachser & Kolb network. Delivery within the scope of standard transit time (generally within 3-5 working days or 7 working days in AT). The driver is in charge of advising the delivery. The required contact information have to be specified within the corresponding fields (according to the data format).
+    TARGO_ON_SITE_PREMIUM = "H"
     # Delivery within the scope of transit time beyond the limits of the entargo countries.
     CLASSICLINE = "N"
     # Delivery “free kerb side” beside the truck at the consignee exclusively for the incoterm "free delivered" on a given date. The consignor agrees a delivery appointment (the day) with the consignee. The required delivery appointment has to be specified in the corresponding fields (according to the data format). The delivery branch asks the consignee the time slot for the delivery (in the morning or in the afternoon).
@@ -76,8 +79,6 @@ class PackingType(str, Enum):
     SACK = "S"
     BARREL = "F"
     BIG_BAG = "BB"
-
-from enum import Enum
 
 class CountryCode(str, Enum):
     # Europa Occidentale e Centrale
