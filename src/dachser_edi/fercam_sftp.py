@@ -1,16 +1,20 @@
-import os
+from __future__ import annotations
+
 import io
-import paramiko
 import logging
-from typing import Optional, Union
+import os
 import posixpath
 
-class FercamSFTP:
-    _PRODUCTION_SERVER = "sftp-prod-in.fercam.com"
-    _TEST_SERVER = "sftp-test-in.fercam.com"
+import paramiko
 
-    DIR_TO_FERCAM = "To_Fercam"
-    DIR_FROM_FERCAM = "From_Fercam"
+
+class FercamSFTP:
+    _PRODUCTION_SERVER = "sftp.b2b.dachser.com"
+    _TEST_SERVER = "sftp.b2b-test.dachser.com"
+    _DEFAULT_PORT = 10022
+
+    DIR_TO_FERCAM = "in"
+    DIR_FROM_FERCAM = "out"
 
     def __init__(self, 
                 username: str, 
@@ -18,11 +22,12 @@ class FercamSFTP:
                 use_test_server: bool = False, 
                 auto_add_keys: bool = False,
                 timeout: int = 30,
-                logger: Optional[logging.Logger] = None
+                logger: logging.Logger | None = None
                 ) -> None:
         self.username = username
         self.password = password
         self.hostname = self._TEST_SERVER if use_test_server else self._PRODUCTION_SERVER
+        self.port = self._DEFAULT_PORT
         self.timeout = timeout
 
         self.logger = logger or logging.getLogger(__name__)
@@ -32,7 +37,7 @@ class FercamSFTP:
         if auto_add_keys:
             self.ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         
-        self.sftp: Optional[paramiko.SFTPClient] = None
+        self.sftp: paramiko.SFTPClient | None = None
 
     def __enter__(self):
         """Permette l'uso di 'with FercamSFTP(...) as sftp:'"""
@@ -51,9 +56,10 @@ class FercamSFTP:
         self.close()
 
         try:
-            self.logger.info(f"Connecting to {self.hostname}...")
+            self.logger.info(f"Connecting to {self.hostname}:{self.port}...")
             self.ssh_client.connect(
                 self.hostname,
+                port=self.port,
                 username=self.username,
                 password=self.password,
                 timeout=self.timeout,
@@ -74,7 +80,7 @@ class FercamSFTP:
         if self.sftp is not None:
             try:
                 self.sftp.close()
-            except Exception as e:
+            except (OSError, paramiko.SSHException) as e:
                 # The socket may already be dead; that's exactly what we want.
                 self.logger.debug(f"Error closing SFTP session: {e}")
             finally:
@@ -82,7 +88,7 @@ class FercamSFTP:
 
         try:
             self.ssh_client.close()
-        except Exception as e:
+        except (OSError, paramiko.SSHException) as e:
             self.logger.debug(f"Error closing SSH client: {e}")
 
         if had_connection:
@@ -113,7 +119,7 @@ class FercamSFTP:
         self.close()
         self.connect()
 
-    def send_file(self, local_file_path: str, remote_filename: str = None) -> None:
+    def send_file(self, local_file_path: str, remote_filename: str | None = None) -> None:
         self._ensure_connection()
         
         if not os.path.isfile(local_file_path):
@@ -134,7 +140,7 @@ class FercamSFTP:
             self.logger.error(f"Upload failed: {e}")
             raise
 
-    def send_content(self, content: Union[str, bytes], remote_filename: str) -> None:
+    def send_content(self, content: str | bytes, remote_filename: str) -> None:
         self._ensure_connection()
 
         remote_file_path = posixpath.join(self.DIR_TO_FERCAM, remote_filename)
